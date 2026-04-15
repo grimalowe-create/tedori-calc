@@ -140,10 +140,75 @@ function calculate(incomeMan, employmentType, familyType, hasHousingLoan, hasLif
         pension,
         employmentInsurance,
         nursingInsurance,
+        totalSocialInsurance,
         totalDeductions,
         isSelf: employmentType === 'self',
         hasNursing: age >= 40,
     };
+}
+
+// ===== 円グラフ =====
+
+const CHART_ITEMS = [
+    { key: 'takeHome',     label: '手取り額',    color: '#2A9D8F' },
+    { key: 'incomeTax',    label: '所得税',       color: '#E76F51' },
+    { key: 'residential',  label: '住民税',       color: '#F4A261' },
+    { key: 'social',       label: '社会保険料',   color: '#457B9D' },
+];
+
+function drawPieChart(takeHome, incomeTax, residentialTax, socialInsurance) {
+    const canvas = document.getElementById('pieChart');
+    const ctx    = canvas.getContext('2d');
+    const W = canvas.width;
+    const H = canvas.height;
+    const cx = W / 2;
+    const cy = H / 2;
+    const outerR = 105;
+    const innerR = 62; // ドーナツの穴
+
+    const total = takeHome + incomeTax + residentialTax + socialInsurance;
+    const values = [takeHome, incomeTax, residentialTax, socialInsurance];
+
+    ctx.clearRect(0, 0, W, H);
+
+    // セグメント描画
+    let startAngle = -Math.PI / 2;
+    CHART_ITEMS.forEach((item, i) => {
+        const sliceAngle = (values[i] / total) * 2 * Math.PI;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, outerR, startAngle, startAngle + sliceAngle);
+        ctx.closePath();
+        ctx.fillStyle = item.color;
+        ctx.fill();
+        startAngle += sliceAngle;
+    });
+
+    // 中央の白い穴（ドーナツ化）
+    ctx.beginPath();
+    ctx.arc(cx, cy, innerR, 0, 2 * Math.PI);
+    ctx.fillStyle = '#e8f5f4'; // 結果エリアの背景色に合わせる
+    ctx.fill();
+
+    // 中央テキスト
+    const takeHomeRate = Math.round((takeHome / total) * 100);
+    ctx.textAlign    = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle    = '#2A9D8F';
+    ctx.font         = 'bold 12px "Segoe UI", "Hiragino Sans", sans-serif';
+    ctx.fillText('手取り率', cx, cy - 11);
+    ctx.font         = 'bold 22px "Segoe UI", "Hiragino Sans", sans-serif';
+    ctx.fillText(takeHomeRate + '%', cx, cy + 13);
+
+    // 凡例
+    const legend = document.getElementById('chartLegend');
+    legend.innerHTML = CHART_ITEMS.map((item, i) => {
+        const pct = ((values[i] / total) * 100).toFixed(1);
+        return `<div class="legend-item">
+            <span class="legend-color" style="background:${item.color};"></span>
+            <span>${item.label}（${pct}%）</span>
+        </div>`;
+    }).join('');
 }
 
 // ===== イベント =====
@@ -194,6 +259,9 @@ document.addEventListener('DOMContentLoaded', function () {
         // 自営業は雇用保険なし
         document.getElementById('employmentInsurance').textContent =
             r.isSelf ? 'なし' : fmt(r.employmentInsurance);
+
+        // 円グラフ描画
+        drawPieChart(r.takeHomeAnnual, r.incomeTax, r.residentialTax, r.totalSocialInsurance);
 
         const container = document.getElementById('resultContainer');
         container.classList.remove('hidden');

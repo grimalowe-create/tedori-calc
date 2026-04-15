@@ -221,6 +221,42 @@
             line-height: 1.6;
         }
 
+        /* 円グラフ */
+        .chart-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        #pieChart {
+            display: block;
+        }
+
+        .chart-legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px 20px;
+            margin-top: 16px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #444;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
         /* 内訳テーブル */
         .breakdown-section {
             margin-top: 20px;
@@ -540,6 +576,12 @@
                 <div class="result-label">手取り月収（概算）</div>
                 <div class="result-sub"><span id="takeHomeMonthly">-</span><small style="font-size:14px; color:#999;"> 円 / 月</small></div>
                 <div class="result-description">手取り年収 ÷ 12 の概算値です。</div>
+            </div>
+
+            <!-- 円グラフ -->
+            <div class="chart-container">
+                <canvas id="pieChart" width="250" height="250"></canvas>
+                <div class="chart-legend" id="chartLegend"></div>
             </div>
 
             <!-- 控除内訳 -->
