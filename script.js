@@ -9,6 +9,18 @@ function updateIncomePreview() {
     preview.textContent = `→ ${val.toLocaleString()} 万円（${(val * 10000).toLocaleString()} 円）`;
 }
 
+// 年齢プレビュー
+function updateAgePreview() {
+    const val = parseInt(document.getElementById('age').value, 10);
+    const preview = document.getElementById('agePreview');
+    if (!val || val < 18 || val > 75) {
+        preview.textContent = '';
+        return;
+    }
+    const note = val >= 40 ? '（40歳以上のため介護保険料が加算されます）' : '';
+    preview.textContent = `→ ${val} 歳 ${note}`;
+}
+
 // プライバシーポリシー モーダル
 function openPrivacyModal() {
     document.getElementById('privacyModal').classList.add('open');
@@ -50,7 +62,7 @@ function calcIncomeTax(taxableIncome) {
     return Math.round(Math.max(0, tax) * 1.021);
 }
 
-function calculate(incomeMan, employmentType, familyType, hasHousingLoan, hasLifeInsurance) {
+function calculate(incomeMan, employmentType, familyType, hasHousingLoan, hasLifeInsurance, age) {
     const incomeYen = incomeMan * 10000;
 
     // ── 1. 給与所得（収入 − 給与所得控除） ──
@@ -64,7 +76,7 @@ function calculate(incomeMan, employmentType, familyType, hasHousingLoan, hasLif
     const grossIncome = Math.max(0, incomeYen - employmentDeduction);
 
     // ── 2. 社会保険料 ──
-    let healthInsurance, pension, employmentInsurance;
+    let healthInsurance, pension, employmentInsurance, nursingInsurance;
 
     if (employmentType === 'self') {
         // 国民健康保険（所得割を簡略計算、上限92万）
@@ -72,14 +84,20 @@ function calculate(incomeMan, employmentType, familyType, hasHousingLoan, hasLif
         // 国民年金（2024年度：月額16,980円 × 12）
         pension             = 203760;
         employmentInsurance = 0;
+        // 介護保険料（40歳以上）：国保の介護分として所得の約1.8%で簡略計算
+        nursingInsurance    = age >= 40 ? Math.round(Math.min(grossIncome * 0.018, 170000)) : 0;
     } else {
         // 会社員・公務員（協会けんぽ全国平均ベース・労使折半の本人負担）
         const standardMonthly   = Math.min(incomeYen / 12, 650000);
         healthInsurance         = Math.round(standardMonthly * 0.05   * 12); // 健康保険 5.0%
         pension                 = Math.round(Math.min(standardMonthly, 635000) * 0.0915 * 12); // 厚生年金 9.15%
         employmentInsurance     = Math.round(incomeYen * 0.006); // 雇用保険 0.6%
+        // 介護保険料（40歳以上）：標準報酬月額 × 1.82% の労使折半（本人0.91%）
+        nursingInsurance        = age >= 40
+            ? Math.round(Math.min(standardMonthly, 650000) * 0.0091 * 12)
+            : 0;
     }
-    const totalSocialInsurance = healthInsurance + pension + employmentInsurance;
+    const totalSocialInsurance = healthInsurance + pension + employmentInsurance + nursingInsurance;
 
     // ── 3. 所得控除（所得税用） ──
     let deductions = 480000; // 基礎控除
@@ -121,8 +139,10 @@ function calculate(incomeMan, employmentType, familyType, hasHousingLoan, hasLif
         healthInsurance,
         pension,
         employmentInsurance,
+        nursingInsurance,
         totalDeductions,
         isSelf: employmentType === 'self',
+        hasNursing: age >= 40,
     };
 }
 
@@ -144,14 +164,15 @@ document.addEventListener('DOMContentLoaded', function () {
         e.preventDefault();
 
         const incomeMan    = parseFloat(document.getElementById('income').value);
+        const age          = parseInt(document.getElementById('age').value, 10);
         const employment   = document.querySelector('input[name="employment"]:checked').value;
         const family       = document.querySelector('input[name="family"]:checked').value;
         const hasHousing   = document.querySelector('input[name="housing"]:checked').value === 'yes';
         const hasInsurance = document.querySelector('input[name="insurance"]:checked').value === 'yes';
 
-        if (!incomeMan || incomeMan <= 0) return;
+        if (!incomeMan || incomeMan <= 0 || !age || age < 18 || age > 75) return;
 
-        const r = calculate(incomeMan, employment, family, hasHousing, hasInsurance);
+        const r = calculate(incomeMan, employment, family, hasHousing, hasInsurance, age);
 
         document.getElementById('takeHomeAnnual').textContent  = Math.round(r.takeHomeAnnual).toLocaleString();
         document.getElementById('takeHomeMonthly').textContent = Math.round(r.takeHomeMonthly).toLocaleString();
@@ -160,6 +181,15 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('healthInsurance').textContent = fmt(r.healthInsurance);
         document.getElementById('pension').textContent         = fmt(r.pension);
         document.getElementById('totalDeductions').textContent = fmt(r.totalDeductions);
+
+        // 介護保険料（40歳以上のみ表示）
+        const nursingRow = document.getElementById('nursingInsuranceRow');
+        if (r.hasNursing) {
+            document.getElementById('nursingInsurance').textContent = fmt(r.nursingInsurance);
+            nursingRow.style.display = '';
+        } else {
+            nursingRow.style.display = 'none';
+        }
 
         // 自営業は雇用保険なし
         document.getElementById('employmentInsurance').textContent =

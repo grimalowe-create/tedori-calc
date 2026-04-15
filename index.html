@@ -463,10 +463,19 @@
                 </div>
             </div>
 
+            <!-- 年齢 -->
+            <div class="form-section">
+                <div class="form-group">
+                    <label for="age">3. 年齢</label>
+                    <input type="number" id="age" min="18" max="75" step="1" placeholder="例：35" required oninput="updateAgePreview()">
+                    <div id="agePreview" style="margin-top:8px; font-size:13px; color:#2A9D8F;"></div>
+                </div>
+            </div>
+
             <!-- 家族構成 -->
             <div class="form-section">
                 <div class="form-group">
-                    <label>3. 家族構成</label>
+                    <label>4. 家族構成</label>
                     <div class="radio-group">
                         <label class="radio-label">
                             <input type="radio" name="family" value="single" required> 独身
@@ -487,7 +496,7 @@
             <!-- 住宅ローン控除 -->
             <div class="form-section">
                 <div class="form-group">
-                    <label>4. 住宅ローン控除</label>
+                    <label>5. 住宅ローン控除</label>
                     <div class="radio-group">
                         <label class="radio-label">
                             <input type="radio" name="housing" value="yes" required> あり
@@ -502,7 +511,7 @@
             <!-- 生命保険料控除 -->
             <div class="form-section">
                 <div class="form-group">
-                    <label>5. 生命保険料控除</label>
+                    <label>6. 生命保険料控除</label>
                     <div class="radio-group">
                         <label class="radio-label">
                             <input type="radio" name="insurance" value="yes" required> あり
@@ -551,6 +560,10 @@
                 <div class="breakdown-row">
                     <span class="lbl">年金保険料</span>
                     <span class="val" id="pension">-</span>
+                </div>
+                <div class="breakdown-row" id="nursingInsuranceRow">
+                    <span class="lbl">介護保険料</span>
+                    <span class="val" id="nursingInsurance">-</span>
                 </div>
                 <div class="breakdown-row" id="employmentInsuranceRow">
                     <span class="lbl">雇用保険料</span>
