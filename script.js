@@ -263,6 +263,15 @@ document.addEventListener('DOMContentLoaded', function () {
         // 円グラフ描画
         drawPieChart(r.takeHomeAnnual, r.incomeTax, r.residentialTax, r.totalSocialInsurance);
 
+        // SNSシェアURL生成
+        const takeHomeRate = Math.round((r.takeHomeAnnual / (incomeMan * 10000)) * 100);
+        const shareText = `私の手取り年収は【${Math.round(r.takeHomeAnnual).toLocaleString()}円】（手取り率${takeHomeRate}%）でした！\n年収から手取りを無料で計算 #手取り計算 #マネナビ`;
+        const shareUrl  = 'https://tedori-calc-ten.vercel.app/';
+        document.getElementById('shareTwitter').href =
+            `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+        document.getElementById('shareLine').href =
+            `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`;
+
         const container = document.getElementById('resultContainer');
         container.classList.remove('hidden');
         container.scrollIntoView({ behavior: 'smooth', block: 'start' });

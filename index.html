@@ -316,6 +316,31 @@
             border-left: 4px solid #e74c3c;
         }
 
+        .cta-button {
+            width: 100%;
+            padding: 14px;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .cta-button:active {
+            transform: translateY(0);
+        }
+
         /* フッター */
         footer {
             background: #2A9D8F;
@@ -619,6 +644,20 @@
 
             <div class="warning-text">
                 ⚠️ ※あくまでも目安です。実際の金額は勤務先・居住地・年齢等により異なります。詳細は税理士等にご相談ください。
+            </div>
+
+            <div style="margin-top: 20px;">
+                <p style="font-weight: 600; color: #333; margin-bottom: 12px;">📣 結果をシェアする</p>
+                <div style="display: flex; gap: 12px;">
+                    <a id="shareTwitter" href="#" target="_blank" rel="noopener"
+                        class="cta-button" style="background-color: #000000; flex: 1;">
+                        𝕏 でシェア
+                    </a>
+                    <a id="shareLine" href="#" target="_blank" rel="noopener"
+                        class="cta-button" style="background-color: #06C755; flex: 1;">
+                        LINE でシェア
+                    </a>
+                </div>
             </div>
         </div>
     </div>
