@@ -461,6 +461,15 @@
             margin-bottom: 0;
         }
 
+        /* 関連記事ブロック */
+        .related-articles { margin:32px 0 0; padding:20px; border:1px solid #e5e7eb; border-left:4px solid #1E3A8A; border-radius:8px; background:#f9fafb; }
+        .ra-heading { font-size:1.05rem; font-weight:700; color:#1E3A8A; margin:0 0 12px; }
+        .ra-list { list-style:none; padding:0; margin:0; display:grid; gap:8px; }
+        .ra-link { display:block; padding:12px 14px; background:#fff; border:1px solid #e5e7eb; border-radius:6px; text-decoration:none; color:#111827; transition:border-color .15s; }
+        .ra-link:hover { border-color:#D4A02E; }
+        .ra-title { display:block; font-weight:600; font-size:0.95rem; }
+        .ra-desc { display:block; font-size:0.83rem; color:#6b7280; margin-top:4px; }
+
         @media (max-width: 480px) {
             header h1 {
                 font-size: 22px;
@@ -661,6 +670,21 @@
                     </a>
                 </div>
             </div>
+
+            <!-- 関連記事ブロック -->
+            <aside class="related-articles" aria-label="関連する解説記事">
+                <h2 class="ra-heading">結果を踏まえた次のステップ</h2>
+                <ul class="ra-list">
+                    <li><a class="ra-link" href="https://mane-navi.com/nenshu-500man-tedori/?utm_source=tedori-calc&utm_medium=related&utm_campaign=tool_to_blog" target="_blank" rel="noopener noreferrer">
+                        <span class="ra-title">年収500万円の手取り内訳</span>
+                        <span class="ra-desc">税金と社会保険料の内訳解説</span>
+                    </a></li>
+                    <li><a class="ra-link" href="https://mane-navi.com/fukugyou-furusato-nouzei/?utm_source=tedori-calc&utm_medium=related&utm_campaign=tool_to_blog" target="_blank" rel="noopener noreferrer">
+                        <span class="ra-title">副業所得とふるさと納税</span>
+                        <span class="ra-desc">控除上限額への影響</span>
+                    </a></li>
+                </ul>
+            </aside>
         </div>
     </div>
 
